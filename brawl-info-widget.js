@@ -3,9 +3,9 @@
 // icon-color: blue; icon-glyph: splotch;
 const playerTag = args.widgetParameter;
 // const playerTag = "GGQUUQ8R";
-const appIconUrl = "https://upload.wikimedia.org/wikipedia/en/1/18/Brawl_Stars_logo.png";
+const appIconUrl = "https://github.com/Why-People/brawl-info-widget/blob/master/img/Title.png";
 const trophyIconUrl = "https://static.wikia.nocookie.net/brawlstars/images/c/cd/Trophy.png/revision/latest/scale-to-width-down/100?cb=20200304181812";
-const appBGUrl = "https://i.redd.it/iapqmzd3zu721.jpg";
+const appBGUrl = "https://github.com/Why-People/brawl-info-widget/blob/master/img/Widget_BG.jpeg";
 
 // Create Widget
 let mainWidget = await createWidget();
