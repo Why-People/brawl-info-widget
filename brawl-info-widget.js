@@ -3,7 +3,7 @@
 // icon-color: blue; icon-glyph: splotch;
 
 const brawlInfoWidget = {
-  runScript(widgetParameter) {
+  runScript: function(widgetParameter) {
       let playerTag = widgetParameter;
       // const playerTag = "GGQUUQ8R";
       const appIconUrl = "https://i.imgur.com/xbawmfe.png";
@@ -32,7 +32,7 @@ const brawlInfoWidget = {
   },
 
   // Create the Widget
-  async createWidget(playerTag) {
+  createWidget: async function(playerTag) {
     const scaleF = 0.5
     const appIcon = await this.loadAppImg("https://i.imgur.com/xbawmfe.png");
     console.log(appIcon.size);
@@ -138,7 +138,7 @@ const brawlInfoWidget = {
     return widget;
   },
 
-  async createProgressBar(ranks, max, color) {
+  createProgressBar: async function(ranks, max, color) {
     const w = 250;
     const h = 5;
     const context = new DrawContext();
@@ -160,7 +160,7 @@ const brawlInfoWidget = {
     return context.getImage();
   },
   // Choose what rank progress bars to display to the user
-  async getSuitableRanks(playerData) {
+  getSuitableRanks: async function(playerData) {
     let displayRanks = {
       r35: false,
       r30: false,
@@ -182,7 +182,7 @@ const brawlInfoWidget = {
     return displayRanks;
   },
   // Get Player Trophies from the Brawl Stars API
-  async getPlayerData(playerID) {
+  getPlayerData: async function(playerID) {
     const url = "http://10.0.0.59:8060/brawl-info-player-service/api/v1/player/" + playerTag;
     let req = new Request(url);
     let obj = await req.loadJSON();
@@ -190,7 +190,7 @@ const brawlInfoWidget = {
     return obj;
   },
   // Get Image from url  
-  async loadAppImg(url) {
+  loadAppImg: async function(url) {
     let req = new Request(url);
     console.log(req.loadJSON());
     return req.loadImage();
