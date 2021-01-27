@@ -162,15 +162,15 @@ async function getPlayerData(playerTag) {
   const url = "http://10.0.0.59:8060/brawl-info-player-service/api/v1/player/" + playerTag;
   let req = new Request(url);
   req.timeoutInterval = 8;
-  let obj = undefined;
+  let obj = await req.loadJSON();
 
   try {
     obj = await req.loadJSON();
   } catch(err) {
-    obj = await getBackup();
+    obj = await getBackup(playerTag);
   }
   console.log(obj);
-  await writeBackup(obj);
+  await writeBackup(obj, playerTag);
   return obj;
 }
 
