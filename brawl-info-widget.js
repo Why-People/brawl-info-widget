@@ -161,8 +161,15 @@ async function modifyTag(playerTag) {
 async function getPlayerData(playerTag) {
   const url = "http://10.0.0.59:8060/brawl-info-player-service/api/v1/player/" + playerTag;
   let req = new Request(url);
-  let obj = await req.loadJSON();
+  let obj = undefined;
+
+  try {
+    obj = await req.loadJSON();
+  } catch(err) {
+    obj = await getBackup();
+  }
   console.log(obj);
+  await writeBackup(obj);
   return obj;
 }
 
@@ -170,4 +177,32 @@ async function getPlayerData(playerTag) {
 async function loadAppImg(url) {
   let req = new Request(url);
   return req.loadImage();
+}
+
+// Get backup file if request times out
+async function getBackup(playerTag) {
+  let fileM = FileManager.local();
+  const iCloud = fileM.isFileStoredIniCloud(module.filename);
+  fileM = iCloud ? FileManager.iCloud() : fileM;
+
+  const path = fileM.joinPath(fileM.documentsDirectory(), playerTag + ".txt");
+
+  if(!fileM.fileExists(path)) {
+    return {
+      errorMsg: "Request Failed and No Backup found..."
+    };
+  } else {
+    if(iCloud) await fileM.downloadFileFromiCloud(path);
+    return JSON.parse(fileM.readString(path));
+  }
+}
+
+// Write the contents of the response to a backup file in case of Request Timeout for future requests
+async function writeBackup(obj, playerTag) {
+  let fileM = FileManager.local();
+  const iCloud = fileM.isFileStoredIniCloud(module.filename);
+  fileM = iCloud ? FileManager.iCloud() : fileM;
+
+  const path = fileM.joinPath(fileM.documentsDirectory(), playerTag + ".txt");
+  fileM.writeString(path, JSON.stringify(obj));
 }
