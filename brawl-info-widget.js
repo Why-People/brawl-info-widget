@@ -92,6 +92,7 @@ async function createWidget(playerTag) {
   }
 
   for(const key of Object.keys(ranksToDisplay)) {
+    console.log(key);
     if(ranksToDisplay[key]) {
       await createProgressStack(key, data, rankColor[key], widget);
       widget.addSpacer(2);
