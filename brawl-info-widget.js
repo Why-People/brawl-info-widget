@@ -2,7 +2,7 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: blue; icon-glyph: splotch;
 
-runScript = (widgetParameter) => {
+runScript = async (widgetParameter) => {
       let playerTag = widgetParameter;
       // const playerTag = "GGQUUQ8R";
       const appIconUrl = "https://i.imgur.com/xbawmfe.png";
