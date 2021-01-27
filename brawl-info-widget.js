@@ -182,7 +182,7 @@ async function getSuitableRanks(playerData) {
 }
 // Get Player Trophies from the Brawl Stars API
 async function getPlayerData(playerID) {
-  const url = "http://10.0.0.59:8060/brawl-info-player-service/api/v1/player/" + playerTag;
+  const url = "http://10.0.0.59:8060/brawl-info-player-service/api/v1/player/" + playerID;
   let req = new Request(url);
   let obj = await req.loadJSON();
   console.log(obj);
