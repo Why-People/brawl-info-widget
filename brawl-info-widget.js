@@ -2,7 +2,7 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: blue; icon-glyph: splotch;
 
-module.exports.runScript = (widgetParameter) => {
+runScript = (widgetParameter) => {
       let playerTag = widgetParameter;
       // const playerTag = "GGQUUQ8R";
       const appIconUrl = "https://i.imgur.com/xbawmfe.png";
@@ -195,4 +195,4 @@ async function loadAppImg(url) {
   return req.loadImage();
 }
 
-// module.exports = brawlInfoWidget;
+module.exports = runScript;
