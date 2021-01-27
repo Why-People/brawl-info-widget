@@ -74,7 +74,8 @@ async function createWidget(playerTag) {
     20: new Color("e004bc")
   }
 
-  for(const key of Object.keys(ranksToDisplay)) {
+  // We want to loop in a specific order due so we can display the higher ranks first
+  for(const key in [35, 30, 25, 20]) {
     console.log(key);
     if(ranksToDisplay[key]) {
       await createProgressStack(key, data, rankColor[key], widget);
