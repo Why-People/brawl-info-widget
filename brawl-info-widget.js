@@ -1,18 +1,18 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
 // icon-color: blue; icon-glyph: splotch;
-const SCALE_FACTOR = 0.5
 
+const SCALE_FACTOR = 0.5
+const APP_ICON_URL = "https://i.imgur.com/xbawmfe.png";
+const APP_BG_URL = "https://i.imgur.com/TGoHbXq.jpg";
+
+// Export the Main Function
 module.exports.runScript = async (widgetParameter) => {
   let playerTag = widgetParameter;
-  // const playerTag = "GGQUUQ8R";
-  const appIconUrl = "https://i.imgur.com/xbawmfe.png";
-  const appBGUrl = "https://i.imgur.com/TGoHbXq.jpg";
 
-  if(playerTag === null) {
-    playerTag = "GQUUQ8R";
-  }
-
+  if(playerTag === null) playerTag = "GQUUQ8R";
+  else playerTag = await modifyTag(playerTag);
+  
   // Create Widget
   let mainWidget = await createWidget(playerTag);
 
@@ -41,18 +41,8 @@ async function createWidget(playerTag) {
   let widget = new ListWidget();
   
   widget.backgroundImage = appBG;
-
-  let titleStack = widget.addStack();
   
-  // let appIconElement = titleStack.addImage(appIcon);
-  // appIconElement.imageSize = new Size(100, 100);
-  // appIconElement.minimumScaleFactor = 10;
-  // appIconElement.imageSize = new Size(appIcon.size.width / 6, appIcon.size.height / 6);
-  // appIconElement.leftAlignImage();
   widget.addSpacer(2);
-
-  // trophyStack.layoutVertically();
-  // trophyStack.addSpacer(2);
 
   let name = widget.addText(data.name);
   name.textColor = Color.white();
@@ -70,13 +60,6 @@ async function createWidget(playerTag) {
   trophyCountElement.leftAlignText();
   trophyStack.addSpacer();
   widget.addSpacer(2);
-  
-  // let highestTrophies = trophyStack.addText("🏆 " + data.highestTrophies);
-  // highestTrophies.textColor = Color.white();
-  // highestTrophies.font = Font.mediumRoundedSystemFont(30);
-  // highestTrophies.minimumScaleFactor = scaleF;
-  // highestTrophies.rightAlignText();
-  // widget.addSpacer(2);
 
   let brawlerTitleStack1 = widget.addStack();
   let brawlerContentStack1 = widget.addStack();
@@ -99,53 +82,6 @@ async function createWidget(playerTag) {
     }
   }
 
-  // let rankText1 = brawlerTitleStack1.addText(data.brawlerRanks.rank35s + "/" + data.brawlers.length + " Rank 35");
-  // rankText1.textColor = Color.white();
-  // rankText1.font = Font.mediumRoundedSystemFont(15);
-  // rankText1.minimumScaleFactor = SCALE_FACTOR;
-  // rankText1.leftAlignText();
-
-  // let contentText1 = brawlerContentStack1.addImage(await createProgressBar(data.brawlerRanks.rank35s, data.brawlers.length, new Color("8404b3")));
-
-  // let brawlerTitleStack2 = widget.addStack();
-  // let brawlerContentStack2 = widget.addStack();
-
-  // widget.addSpacer(2);
-  
-  // let rankText2 = brawlerTitleStack2.addText(data.brawlerRanks.rank30s + "/" + data.brawlers.length + " Rank 30");
-  // rankText2.textColor = Color.white();
-  // rankText2.font = Font.mediumRoundedSystemFont(15);
-  // rankText2.minimumScaleFactor = SCALE_FACTOR;
-  // rankText2.leftAlignText();
-
-  // let contentText2 = brawlerContentStack2.addImage(await createProgressBar(data.brawlerRanks.rank30s, data.brawlers.length, new Color("f01818")));
-
-  // widget.addSpacer(2);
-
-  // let brawlerTitleStack3 = widget.addStack();
-  // let brawlerContentStack3 = widget.addStack();
-  
-  // let rankText3 = brawlerTitleStack3.addText(data.brawlerRanks.rank25s + "/" + data.brawlers.length + " Rank 25");
-  // rankText3.textColor = Color.white();
-  // rankText3.font = Font.mediumRoundedSystemFont(15);
-  // rankText3.minimumScaleFactor = SCALE_FACTOR;
-  // rankText3.leftAlignText();
-
-  // let contentText3 = brawlerContentStack3.addImage(await createProgressBar(data.brawlerRanks.rank25s, data.brawlers.length, new Color("00ff8c")));
-
-  // widget.addSpacer(2);
-
-  // let brawlerTitleStack4 = widget.addStack();
-  // let brawlerContentStack4 = widget.addStack();
-  
-  // let rankText4 = brawlerTitleStack4.addText(data.brawlerRanks.rank20s + "/" + data.brawlers.length + " Rank 20");
-  // rankText4.textColor = Color.white();
-  // rankText4.font = Font.mediumRoundedSystemFont(15);
-  // rankText4.minimumScaleFactor = SCALE_FACTOR;
-  // rankText4.leftAlignText();
-
-  // let contentText4 = brawlerContentStack4.addImage(await createProgressBar(data.brawlerRanks.rank20s, data.brawlers.length, new Color("e004bc")));
-
   widget.addSpacer(2);
   
   return widget;
@@ -156,10 +92,10 @@ async function createProgressStack(rank, data, color, widget) {
   let brawlerContentStack = widget.addStack();
 
   const rankObj = {
-    35: data.brawlerRanks.rank35s,
-    30: data.brawlerRanks.rank30s,
+    20: data.brawlerRanks.rank20s,
     25: data.brawlerRanks.rank25s,
-    20: data.brawlerRanks.rank20s
+    30: data.brawlerRanks.rank30s,
+    35: data.brawlerRanks.rank35s
   }; 
 
   let rankText = brawlerTitleStack.addText(rankObj[rank] + "/" + data.brawlers.length + " Rank " + rank);
@@ -169,9 +105,9 @@ async function createProgressStack(rank, data, color, widget) {
   rankText.leftAlignText();
 
   let rankProgressBar = brawlerContentStack.addImage(await createProgressBar(rankObj[rank], data.brawlers.length, color));
-
 }
 
+// Create the progress bar for the ranks
 async function createProgressBar(ranks, max, color) {
   const w = 250;
   const h = 5;
@@ -194,7 +130,7 @@ async function createProgressBar(ranks, max, color) {
   return context.getImage();
 }
 
-// Choose what rank progress bars to display to the user
+// Choose what rank progress bars to display to the user (Top 2)
 async function getSuitableRanks(playerData) {
   let displayRanks = {
     35: false,
@@ -216,19 +152,24 @@ async function getSuitableRanks(playerData) {
   
   return displayRanks;
 }
+
+// Make the Player Tag request compatible
+async function modifyTag(playerTag) {
+  return playerTag.startsWith("#") ? playerTag.substring(1).toUpperCase() : playerTag.toUpperCase();
+}
+
 // Get Player Trophies from the Brawl Stars API
-async function getPlayerData(playerID) {
-  const url = "http://10.0.0.59:8060/brawl-info-player-service/api/v1/player/" + playerID;
+async function getPlayerData(playerTag) {
+  const url = "http://10.0.0.59:8060/brawl-info-player-service/api/v1/player/" + playerTag;
   let req = new Request(url);
   let obj = await req.loadJSON();
   console.log(obj);
   return obj;
 }
+
 // Get Image from url  
 async function loadAppImg(url) {
   let req = new Request(url);
   console.log(req.loadJSON());
   return req.loadImage();
 }
-
-// module.exports = runScript;
