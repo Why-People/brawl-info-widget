@@ -33,9 +33,8 @@ module.exports.runScript = async (widgetParameter) => {
 
 // Create the widget
 async function createWidget(playerTag) {
-  const appIcon = await loadAppImg("https://i.imgur.com/xbawmfe.png");
-  console.log(appIcon.size);
-  const appBG = await loadAppImg("https://i.imgur.com/TGoHbXq.jpg");
+  const appIcon = await loadAppImg(APP_ICON_URL);
+  const appBG = await loadAppImg(APP_BG_URL);
   const data = await getPlayerData(playerTag);
   
   let widget = new ListWidget();
@@ -76,7 +75,6 @@ async function createWidget(playerTag) {
 
   // We want to loop in a specific order due so we can display the higher ranks first
   for(const key of [35, 30, 25, 20]) {
-    console.log(key);
     if(ranksToDisplay[key]) {
       await createProgressStack(key, data, rankColor[key], widget);
       widget.addSpacer(2);
@@ -111,7 +109,7 @@ async function createProgressStack(rank, data, color, widget) {
 // Create the progress bar for the ranks
 async function createProgressBar(ranks, max, color) {
   const w = 250;
-  const h = 5;
+  const h = 8;
   const context = new DrawContext();
   context.size = new Size(w, h);
   context.opaque = false;
@@ -164,13 +162,11 @@ async function getPlayerData(playerTag) {
   const url = "http://10.0.0.59:8060/brawl-info-player-service/api/v1/player/" + playerTag;
   let req = new Request(url);
   let obj = await req.loadJSON();
-  console.log(obj);
   return obj;
 }
 
 // Get Image from url  
 async function loadAppImg(url) {
   let req = new Request(url);
-  console.log(req.loadJSON());
   return req.loadImage();
 }
