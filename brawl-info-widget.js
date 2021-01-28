@@ -41,7 +41,7 @@ async function createWidget(playerTag) {
 
   widget.backgroundImage = appBG;
 
-  if(data.trophies) {
+  if(data.error) {
     return await createErrorWidget(widget);
   }
   
@@ -208,7 +208,7 @@ async function getBackup(playerTag) {
 
   if(!fileM.fileExists(path)) {
     return {
-      trophies: "Request Failed and No Backup found..."
+      error: "Request Failed and No Backup found..."
     };
   } else {
     if(iCloud) await fileM.downloadFileFromiCloud(path);
