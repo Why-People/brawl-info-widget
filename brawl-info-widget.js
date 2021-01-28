@@ -186,7 +186,7 @@ async function getBackup(playerTag) {
   const iCloud = fileM.isFileStoredIniCloud(module.filename);
   fileM = iCloud ? FileManager.iCloud() : fileM;
 
-  const path = fileM.joinPath(fileM.documentsDirectory(), playerTag + ".txt");
+  const path = fileM.joinPath(fileM.documentsDirectory(), playerTag + ".json");
 
   if(!fileM.fileExists(path)) {
     return {
@@ -194,7 +194,7 @@ async function getBackup(playerTag) {
     };
   } else {
     if(iCloud) await fileM.downloadFileFromiCloud(path);
-    return JSON.parse(fileM.readString(path));
+    return fileM.readString(path);
   }
 }
 
@@ -204,6 +204,6 @@ async function writeBackup(obj, playerTag) {
   const iCloud = fileM.isFileStoredIniCloud(module.filename);
   fileM = iCloud ? FileManager.iCloud() : fileM;
 
-  const path = fileM.joinPath(fileM.documentsDirectory(), playerTag + ".txt");
-  fileM.writeString(path, JSON.stringify(obj));
+  const path = fileM.joinPath(fileM.documentsDirectory(), playerTag + ".json");
+  fileM.write(path, obj);
 }
