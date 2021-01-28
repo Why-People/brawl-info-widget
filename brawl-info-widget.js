@@ -41,7 +41,7 @@ async function createWidget(playerTag) {
 
   widget.backgroundImage = appBG;
 
-  if(data.trophies === "Request Failed and No Backup found...") {
+  if(data.trophies) {
     return await createErrorWidget(widget);
   }
   
@@ -92,7 +92,7 @@ async function createWidget(playerTag) {
 
 // Create an error widget if request times out and no backup is available
 async function createErrorWidget(widget) {
-  let name = widget.addText(data.name);
+  let name = widget.addText("Error");
   name.textColor = Color.white();
   name.font = Font.boldRoundedSystemFont(60);
   name.minimumScaleFactor = SCALE_FACTOR;
