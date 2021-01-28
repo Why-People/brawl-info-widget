@@ -38,8 +38,12 @@ async function createWidget(playerTag) {
   const data = await getPlayerData(playerTag);
   
   let widget = new ListWidget();
-  
+
   widget.backgroundImage = appBG;
+
+  if(data.errorMsg) {
+    return await createErrorWidget(widget);
+  }
   
   widget.addSpacer(2);
 
@@ -86,6 +90,19 @@ async function createWidget(playerTag) {
   return widget;
 }
 
+// Create an error widget if request times out and no backup is available
+async function createErrorWidget(widget) {
+  let name = widget.addText(data.name);
+  name.textColor = Color.white();
+  name.font = Font.boldRoundedSystemFont(60);
+  name.minimumScaleFactor = SCALE_FACTOR;
+  name.centerAlignText();
+  widget.addSpacer(2);
+
+  return widget;
+}
+
+// Create each stack for brawler ranks
 async function createProgressStack(rank, data, color, widget) {
   let brawlerTitleStack = widget.addStack();
   let brawlerContentStack = widget.addStack();
@@ -170,7 +187,7 @@ async function getPlayerData(playerTag) {
   } catch(err) {
     obj = await getBackup(playerTag);
   }
-  
+
   console.log(obj);
   return obj;
 }
@@ -187,7 +204,7 @@ async function getBackup(playerTag) {
   const iCloud = fileM.isFileStoredIniCloud(module.filename);
   fileM = iCloud ? FileManager.iCloud() : fileM;
 
-  const path = fileM.joinPath(fileM.documentsDirectory(), playerTag + ".txt");
+  const path = fileM.joinPath(fileM.documentsDirectory(), playerTag + ".json");
 
   if(!fileM.fileExists(path)) {
     return {
@@ -205,6 +222,6 @@ async function writeBackup(obj, playerTag) {
   const iCloud = fileM.isFileStoredIniCloud(module.filename);
   fileM = iCloud ? FileManager.iCloud() : fileM;
 
-  const path = fileM.joinPath(fileM.documentsDirectory(), playerTag + ".txt");
+  const path = fileM.joinPath(fileM.documentsDirectory(), playerTag + ".json");
   fileM.writeString(path, JSON.stringify(obj));
 }
