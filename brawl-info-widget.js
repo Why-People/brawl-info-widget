@@ -28,7 +28,6 @@ module.exports.runScript = async (widgetParameter) => {
   Script.complete();
 }
 
-// Create the widget
 async function createWidget(playerTag) {
   const appIcon = await loadAppImg(APP_ICON_URL);
   const appBG = await loadAppImg(APP_BG_URL);
@@ -43,11 +42,12 @@ async function createWidget(playerTag) {
   }
   
   widget.addSpacer(2);
-  await addText(data.name, widget);
+  await addText(data.name, widget, 30);
   widget.addSpacer(2);
 
   let trophyStack = widget.addStack();
-  await addText("🏆 " + data.trophies, trophyStack);
+  await addText("🏆 " + data.trophies, trophyStack, 30);
+  trophyStack.addSpacer();
   widget.addSpacer(2);
 
   const ranksToDisplay = await getSuitableRanks(data);
@@ -73,27 +73,22 @@ async function createWidget(playerTag) {
 
 // Create an error widget if request times out and no backup is available
 async function createErrorWidget(widget) {
-  let name = widget.addText("Error");
-  name.textColor = Color.white();
-  name.font = Font.boldRoundedSystemFont(60);
-  name.minimumScaleFactor = SCALE_FACTOR;
-  name.centerAlignText();
+  await addText("Error", widget, 60);
   widget.addSpacer(2);
 
   return widget;
 }
 
-async function addText(text, stack) {
+async function addText(text, stack, fontSize) {
   let element = stack.addText(text);
   element.textColor = Color.white();
   element.minimumScaleFactor = SCALE_FACTOR;
   element.leftAlignText();
 
   if(typeof stack === WidgetStack) {
-    element.font = Font.mediumRoundedSystemFont(30);
-    stack.addSpacer();
+    element.font = Font.mediumRoundedSystemFont(fontSize);
   } else {
-    element.font = Font.boldRoundedSystemFont(30);
+    element.font = Font.boldRoundedSystemFont(fontSize);
   }
 }
 
@@ -108,11 +103,7 @@ async function createProgressStack(rank, data, color, widget) {
     35: data.brawlerRanks.rank35s
   }; 
 
-  let rankText = brawlerTitleStack.addText(rankObj[rank] + "/" + data.brawlers.length + " Rank " + rank);
-  rankText.textColor = Color.white();
-  rankText.font = Font.mediumRoundedSystemFont(15);
-  rankText.minimumScaleFactor = SCALE_FACTOR;
-  rankText.leftAlignText();
+  await addText(rankObj[rank] + "/" + data.brawlers.length + " Rank " + rank, brawlerTitleStack, 15);
 
   let rankProgressBar = brawlerContentStack.addImage(await createProgressBar(rankObj[rank], data.brawlers.length, color));
 }
@@ -126,17 +117,18 @@ async function createProgressBar(ranks, max, color) {
   context.respectScreenScale = true;
   context.setFillColor(new Color("ffd900"));
   
+  await addPath(context, w, h);
+  context.setFillColor(color);
+  await addPath(context, w * ranks / max, h);
+  
+  return context.getImage();
+}
+
+async function addPath(context, width, height) {
   const path = new Path();
-  path.addRoundedRect(new Rect(0, 0, w, h), 3, 2);
+  path.addRoundedRect(new Rect(0, 0, width, height), 3, 2);
   context.addPath(path);
   context.fillPath();
-  context.setFillColor(color);
-  
-  const path1 = new Path();
-  path1.addRoundedRect(new Rect(0, 0, w * ranks / max, h), 3, 2);
-  context.addPath(path1);
-  context.fillPath();
-  return context.getImage();
 }
 
 async function getSuitableRanks(playerData) {
