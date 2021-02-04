@@ -5,6 +5,7 @@
 const SCALE_FACTOR = 0.5
 const APP_ICON_URL = "https://i.imgur.com/xbawmfe.png";
 const APP_BG_URL = "https://i.imgur.com/TGoHbXq.jpg";
+const BASE_URL = "http://10.0.0.59:8060";
 
 // Export the Main Function
 module.exports.runScript = async (widgetParameter) => {
@@ -13,21 +14,17 @@ module.exports.runScript = async (widgetParameter) => {
   if(playerTag === null) playerTag = "GQUUQ8R";
   else playerTag = await modifyTag(playerTag);
   
-  // Create Widget
   let mainWidget = await createWidget(playerTag);
 
   if(config.runsFromHomeScreen){
-    // Script run inside the home screen
     Script.setWidget(mainWidget);
   } else if(config.runsInApp) {
-    // Allows for Widget Preview
+    // Show a small Widget Preview
     mainWidget.presentSmall();
   }
 
-  // Set the main widget
   Script.setWidget(mainWidget);
 
-  // End Script 
   Script.complete();
 }
 
@@ -46,27 +43,11 @@ async function createWidget(playerTag) {
   }
   
   widget.addSpacer(2);
-
-  let name = widget.addText(data.name);
-  name.textColor = Color.white();
-  name.font = Font.boldRoundedSystemFont(30);
-  name.minimumScaleFactor = SCALE_FACTOR;
-  name.leftAlignText();
+  await addText(data.name, widget);
   widget.addSpacer(2);
 
   let trophyStack = widget.addStack();
-  
-  let trophyCountElement = trophyStack.addText("🏆 " + data.trophies);
-  trophyCountElement.textColor = Color.white();
-  trophyCountElement.font = Font.mediumRoundedSystemFont(30);
-  trophyCountElement.minimumScaleFactor = SCALE_FACTOR;
-  trophyCountElement.leftAlignText();
-  trophyStack.addSpacer();
-  widget.addSpacer(2);
-
-  let brawlerTitleStack1 = widget.addStack();
-  let brawlerContentStack1 = widget.addStack();
-
+  await addText("🏆 " + data.trophies, trophyStack);
   widget.addSpacer(2);
 
   const ranksToDisplay = await getSuitableRanks(data);
@@ -77,7 +58,7 @@ async function createWidget(playerTag) {
     20: new Color("e004bc")
   }
 
-  // We want to loop in a specific order due so we can display the higher ranks first
+  // Loop in a specific order so we can display the higher ranks first
   for(const key of [35, 30, 25, 20]) {
     if(ranksToDisplay[key]) {
       await createProgressStack(key, data, rankColor[key], widget);
@@ -102,7 +83,20 @@ async function createErrorWidget(widget) {
   return widget;
 }
 
-// Create each stack for brawler ranks
+async function addText(text, stack) {
+  let element = stack.addText(text);
+  element.textColor = Color.white();
+  element.minimumScaleFactor = SCALE_FACTOR;
+  element.leftAlignText();
+
+  if(typeof stack === WidgetStack) {
+    element.font = Font.mediumRoundedSystemFont(30);
+    stack.addSpacer();
+  } else {
+    element.font = Font.boldRoundedSystemFont(30);
+  }
+}
+
 async function createProgressStack(rank, data, color, widget) {
   let brawlerTitleStack = widget.addStack();
   let brawlerContentStack = widget.addStack();
@@ -123,7 +117,6 @@ async function createProgressStack(rank, data, color, widget) {
   let rankProgressBar = brawlerContentStack.addImage(await createProgressBar(rankObj[rank], data.brawlers.length, color));
 }
 
-// Create the progress bar for the ranks
 async function createProgressBar(ranks, max, color) {
   const w = 250;
   const h = 8;
@@ -146,7 +139,6 @@ async function createProgressBar(ranks, max, color) {
   return context.getImage();
 }
 
-// Choose what rank progress bars to display to the user (Top 2)
 async function getSuitableRanks(playerData) {
   let displayRanks = {
     35: false,
@@ -169,14 +161,12 @@ async function getSuitableRanks(playerData) {
   return displayRanks;
 }
 
-// Make the Player Tag request compatible
 async function modifyTag(playerTag) {
   return playerTag.startsWith("#") ? playerTag.substring(1).toUpperCase() : playerTag.toUpperCase();
 }
 
-// Get Player Trophies from the Brawl Stars API
 async function getPlayerData(playerTag) {
-  const url = "http://10.0.0.59:8060/brawl-info-player-service/api/v1/player/" + playerTag;
+  const url = BASE_URL + "/brawl-info-player-service/api/v1/player/" + playerTag;
   let req = new Request(url);
   req.timeoutInterval = 8;
   let obj = undefined;
@@ -192,13 +182,11 @@ async function getPlayerData(playerTag) {
   return obj;
 }
 
-// Get Image from url  
 async function loadAppImg(url) {
   let req = new Request(url);
   return req.loadImage();
 }
 
-// Get backup file if request times out
 async function getBackup(playerTag) {
   let fileM = FileManager.local();
   const iCloud = fileM.isFileStoredIniCloud(module.filename);
@@ -216,7 +204,6 @@ async function getBackup(playerTag) {
   }
 }
 
-// Write the contents of the response to a backup file in case of Request Timeout for future requests
 async function writeBackup(obj, playerTag) {
   let fileM = FileManager.local();
   const iCloud = fileM.isFileStoredIniCloud(module.filename);
