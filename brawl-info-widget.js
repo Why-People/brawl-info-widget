@@ -144,10 +144,10 @@ function getSuitableRanks(playerData) {
 
 function modifyTag(playerTag) {
     return playerTag === null ? 
+    "" :
     (playerTag.startsWith("#") ? 
       playerTag.substring(1).toUpperCase() : 
-      playerTag.toUpperCase()) 
-    : "";
+      playerTag.toUpperCase()) ;
 }
 
 function getBackup(playerTag) {
