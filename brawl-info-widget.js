@@ -8,10 +8,7 @@ const BASE_URL = "http://10.0.0.59:8060";
 
 // Export the Main Function
 module.exports.runScript = async (widgetParameter) => {
-    let playerTag = widgetParameter;
-
-    if(playerTag === null) playerTag = "GQUUQ8R";
-    else playerTag = modifyTag(playerTag);
+    let playerTag = modifyTag(widgetParameter);
     
     let mainWidget = await createWidget(playerTag);
 
@@ -56,7 +53,7 @@ async function createWidget(playerTag) {
         20: new Color("e004bc")
     }
 
-    // Loop in a specific order so we can display the higher ranks first
+    // Loop in a specific order to display the higher ranks first
     for(const key of [35, 30, 25, 20]) {
         if(ranksToDisplay[key]) {
             createProgressStack(key, data, rankColor[key], widget);
@@ -81,12 +78,7 @@ function addText(text, stack, fontSize) {
     element.textColor = Color.white();
     element.minimumScaleFactor = SCALE_FACTOR;
     element.leftAlignText();
-
-    if(typeof stack === WidgetStack) {
-      element.font = Font.mediumRoundedSystemFont(fontSize);
-    } else {
-      element.font = Font.boldRoundedSystemFont(fontSize);
-    }
+    element.font = Font.boldRoundedSystemFont(fontSize);
 }
 
 function createProgressStack(rank, data, color, widget) {
@@ -151,7 +143,11 @@ function getSuitableRanks(playerData) {
 }
 
 function modifyTag(playerTag) {
-    return playerTag.startsWith("#") ? playerTag.substring(1).toUpperCase() : playerTag.toUpperCase();
+    return playerTag === null ? 
+    (playerTag.startsWith("#") ? 
+      playerTag.substring(1).toUpperCase() : 
+      playerTag.toUpperCase()) 
+    : "";
 }
 
 function getBackup(playerTag) {
@@ -166,12 +162,11 @@ function getBackup(playerTag) {
           error: "Request Failed and No Backup found..."
         };
     } else {
-        // if(iCloud) await fileM.downloadFileFromiCloud(path);
         return JSON.parse(fileM.readString(path));
     }
 }
 
-async function writeBackup(obj, playerTag) {
+function writeBackup(obj, playerTag) {
     let fileM = FileManager.local();
     const iCloud = fileM.isFileStoredIniCloud(module.filename);
     fileM = iCloud ? FileManager.iCloud() : fileM;
