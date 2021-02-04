@@ -143,11 +143,9 @@ function getSuitableRanks(playerData) {
 }
 
 function modifyTag(playerTag) {
-    return playerTag === null ? 
-    "" :
-    (playerTag.startsWith("#") ? 
-      playerTag.substring(1).toUpperCase() : 
-      playerTag.toUpperCase()) ;
+    // If tag is null (Happens when running inside app) set the tag to a dummy tag
+    return playerTag === null ? "20G989VP8" : 
+      (playerTag.startsWith("#") ? playerTag.substring(1).toUpperCase() : playerTag.toUpperCase()) ;
 }
 
 function getBackup(playerTag) {
